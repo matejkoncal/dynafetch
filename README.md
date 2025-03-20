@@ -8,7 +8,7 @@ It allows you to experiment with queries by automatically fetching results upon 
 Install Dynafetch using:
 
 ```sh
-go install <path-to-dynafetch>
+go install github.com/matejkoncal/dynafetch@latest
 ```
 
 ## Usage
