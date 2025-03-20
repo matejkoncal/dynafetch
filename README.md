@@ -1,7 +1,5 @@
 # Dynafetch
 
-![Dynafetch logo](dynafetch.jpg)
-
 Dynafetch is a CLI tool for testing FetchXML queries on a Microsoft Dynamics server.  
 It allows you to experiment with queries by automatically fetching results upon changes.
 
