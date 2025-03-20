@@ -2,9 +2,8 @@ package fetchxml
 
 import (
 	"dynafetch/credentials"
-	"encoding/json"
+	"dynafetch/metadata"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,35 +11,49 @@ import (
 	"strings"
 )
 
-func Execute(credentials credentials.RequestData, fetchXml string) map[string]any {
+func Execute(credentials credentials.RequestData, fetchXml string) ([]byte, error) {
 	params := url.Values{}
 	params.Add("fetchXml", fetchXml)
 
 	parsedURL, err := url.Parse(credentials.URL)
 
-	if err != nil {
-		panic(err)
-	}
-
 	entityName, err := getEntityName(fetchXml)
+
+	if err != nil {
+		return nil, err
+	}
 
 	parsedURL.RawQuery = params.Encode()
 
-	colectionName := GetCollectionName(credentials, entityName)
+	colectionName, err := metadata.GetCollectionName(credentials, entityName)
+
+	if err != nil {
+		return nil, err
+	}
 
 	parsedURL.Path = fmt.Sprintf("/api/data/v9.1/%s", colectionName)
 
-	req, _ := http.NewRequest("GET", parsedURL.String(), nil)
+	req, err := http.NewRequest("GET", parsedURL.String(), nil)
+
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Set("Cookie", credentials.Cookie)
 
-	resp, _ := http.DefaultClient.Do(req)
-	respBody, _ := io.ReadAll(resp.Body)
+	resp, err := http.DefaultClient.Do(req)
 
-	var jsonData map[string]any
+	if err != nil {
+		return nil, err
+	}
 
-	json.Unmarshal(respBody, &jsonData)
+	respBody, err := io.ReadAll(resp.Body)
 
-	return jsonData
+	if err != nil {
+		return nil, err
+	}
+
+	return respBody, nil
 }
 
 func getEntityName(fetch string) (string, error) {
@@ -48,8 +61,9 @@ func getEntityName(fetch string) (string, error) {
 
 	for {
 		tok, err := decoder.Token()
+
 		if err != nil {
-			return "", errors.New("entity element not found")
+			return "", err
 		}
 
 		if startElem, ok := tok.(xml.StartElement); ok && startElem.Name.Local == "entity" {

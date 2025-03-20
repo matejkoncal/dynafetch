@@ -1,33 +1,30 @@
-package fetchxml
+package metadata
 
 import (
 	"dynafetch/credentials"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 )
 
-func GetCollectionName(credentials credentials.RequestData, entityName string) string {
+func GetCollectionName(credentials credentials.RequestData, entityName string) (string, error) {
 
 	parsedURL, err := url.Parse(credentials.URL)
-	parsedURL.RawQuery = "$select=EntitySetName"
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	// /api/data/v9.2/EntityDefinitions(LogicalName='account')
+	parsedURL.RawQuery = "$select=EntitySetName"
 
 	parsedURL.Path = fmt.Sprintf("/api/data/v9.0/EntityDefinitions(LogicalName='%s')", entityName)
-
-	println((parsedURL.String()))
 
 	req, _ := http.NewRequest("GET", parsedURL.String(), nil)
 	req.Header.Set("Cookie", credentials.Cookie)
 
-	println("Fetching data...")
 	resp, _ := http.DefaultClient.Do(req)
 	respBody, _ := io.ReadAll(resp.Body)
 
@@ -35,5 +32,9 @@ func GetCollectionName(credentials credentials.RequestData, entityName string) s
 
 	json.Unmarshal(respBody, &jsonData)
 
-	return jsonData["EntitySetName"].(string)
+	if jsonData["EntitySetName"] == nil {
+		return "", errors.New("EntitySetName not found")
+	}
+
+	return jsonData["EntitySetName"].(string), nil
 }
