@@ -8,7 +8,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/matejkoncal/dynafetch/credentials"
+	"github.com/matejkoncal/dynafetch/fetchxml"
+	"github.com/matejkoncal/dynafetch/terminal"
+	"github.com/matejkoncal/dynafetch/watch"
+	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 func main() {

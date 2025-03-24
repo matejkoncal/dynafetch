@@ -1,14 +1,15 @@
 package fetchxml
 
 import (
-	"dynafetch/credentials"
-	"dynafetch/metadata"
 	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/matejkoncal/dynafetch/credentials"
+	"github.com/matejkoncal/dynafetch/metadata"
 )
 
 func Execute(credentials credentials.RequestData, fetchXml string) ([]byte, error) {

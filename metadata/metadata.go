@@ -1,13 +1,14 @@
 package metadata
 
 import (
-	"dynafetch/credentials"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/matejkoncal/dynafetch/credentials"
 )
 
 func GetCollectionName(credentials credentials.RequestData, entityName string) (string, error) {
