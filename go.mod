@@ -1,4 +1,4 @@
-module dynafetch
+module github.com/matejkoncal/dynafetch
 
 go 1.24.1
 
