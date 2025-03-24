@@ -1,10 +1,6 @@
 package main
 
 import (
-	"dynafetch/credentials"
-	"dynafetch/fetchxml"
-	"dynafetch/terminal"
-	"dynafetch/watch"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,10 +8,7 @@ import (
 	"github.com/matejkoncal/dynafetch/fetchxml"
 	"github.com/matejkoncal/dynafetch/terminal"
 	"github.com/matejkoncal/dynafetch/watch"
-	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
 )
 
 func main() {
