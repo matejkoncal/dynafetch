@@ -12,17 +12,16 @@ import (
 )
 
 func main() {
-	filePath := os.Args[1]
-
-	fileProvided := isFileProvided()
-
-	if !fileProvided {
+	if !isFileProvided() {
 		fmt.Println("Please provide a valid file path")
+		return
 	}
 
 	println("Waiting for credentials...")
 	credentials := waitForCredentials()
 	println("Credentials recieved!")
+
+	filePath := os.Args[1]
 
 	channel := make(chan watch.FileEvent)
 	go watch.WatchFile(filePath, channel)
