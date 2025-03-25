@@ -1,14 +1,8 @@
-<fetch>
-	<entity name="appointment">
-		<attribute name="scheduledstart" />
-		<attribute name="subject" />
+<fetch top="1">
+	<entity name="systemform">
+		<attribute name="name" />
 		<filter>
-			<condition attribute="regardingobjectid" operator="eq"
-				value="3326182d-76ea-ee11-904d-002248800b15" />
-			<condition attribute="scheduledstart" operator="on-or-after"
-				value="2025-05-10T22:00:00.000Z" />
-			<condition attribute="scheduledstart" operator="on-or-before"
-				value="2025-09-20T22:00:00.000Z" />
+			<condition attribute="formxml" operator="like" value="%&quot;RescoPcf.Timeline&quot;%" />
 		</filter>
 	</entity>
 </fetch>

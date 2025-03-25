@@ -8,11 +8,28 @@ import (
 	"github.com/matejkoncal/dynafetch/fetchxml"
 	"github.com/matejkoncal/dynafetch/terminal"
 	"github.com/matejkoncal/dynafetch/watch"
+	webui "github.com/matejkoncal/dynafetch/web-ui"
+	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 func main() {
-	if !isFileProvided() {
+	assets, _ := webui.Assets()
+
+	fs := http.FileServer(http.FS(assets))
+	http.Handle("/", http.StripPrefix("/", fs))
+	go http.ListenAndServe(":2222", nil)
+	openBrowser("http://localhost:2222")
+
+	select {}
+
+	filePath := os.Args[1]
+
+	fileProvided := isFileProvided()
+
+	if !fileProvided {
 		fmt.Println("Please provide a valid file path")
 		return
 	}
@@ -20,8 +37,6 @@ func main() {
 	println("Waiting for credentials...")
 	credentials := waitForCredentials()
 	println("Credentials recieved!")
-
-	filePath := os.Args[1]
 
 	channel := make(chan watch.FileEvent)
 	go watch.WatchFile(filePath, channel)
@@ -84,4 +99,24 @@ func parseEntities(entities []byte) ([]any, error) {
 	}
 
 	return jsonData["value"].([]any), nil
+}
+
+func openBrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+
+	if err != nil {
+		println(err)
+	}
+
 }
